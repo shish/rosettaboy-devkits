@@ -1,0 +1,15 @@
+name: rust
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Common
+    uses: ./.github/workflows/_common.yml
+    with:
+      language: rust
+      version: 1.77.1
+    secrets:
+      username: ${{ secrets.DOCKER_USERNAME }}
+      password: ${{ secrets.DOCKER_PASSWORD }}
