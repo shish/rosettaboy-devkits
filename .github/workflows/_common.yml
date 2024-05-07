@@ -3,7 +3,13 @@ name: Common
 on:
   workflow_call:
     inputs:
-      lang:
+      username:
+        required: true
+        type: string
+      password:
+        required: true
+        type: string
+      language:
         required: true
         type: string
       version:
@@ -22,10 +28,10 @@ jobs:
     - name: Publish
       uses: elgohr/Publish-Docker-Github-Action@main
       with:
-        name: shish2k/rosettaboy-devkit-${{ inputs.lang }}
-        dockerfile: ${{ inputs.lang }}.dockerfile
+        name: shish2k/rosettaboy-devkit-${{ inputs.language }}
+        dockerfile: ${{ inputs.language }}.dockerfile
         buildoptions: "--build-arg VERSION=${{ inputs.version }}"
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+        username: ${{ inputs.username }}
+        password: ${{ inputs.password }}
         tags: ${{ inputs.version }}
         platforms: linux/amd64,linux/arm64
