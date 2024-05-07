@@ -3,16 +3,17 @@ name: Common
 on:
   workflow_call:
     inputs:
-      username:
-        required: true
-        type: string
-      password:
-        required: true
-        type: string
       language:
         required: true
         type: string
       version:
+        required: true
+        type: string
+    secrets:
+      username:
+        required: true
+        type: string
+      password:
         required: true
         type: string
 
@@ -31,7 +32,7 @@ jobs:
         name: shish2k/rosettaboy-devkit-${{ inputs.language }}
         dockerfile: ${{ inputs.language }}.dockerfile
         buildoptions: "--build-arg VERSION=${{ inputs.version }}"
-        username: ${{ inputs.username }}
-        password: ${{ inputs.password }}
+        username: ${{ secrets.username }}
+        password: ${{ secrets.password }}
         tags: ${{ inputs.version }}
         platforms: linux/amd64,linux/arm64
