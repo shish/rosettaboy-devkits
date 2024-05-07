@@ -1,0 +1,12 @@
+name: go
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Common
+    uses: ./.github/workflows/_common.yml
+    with:
+      lang: go
+      version: 1.22.2
