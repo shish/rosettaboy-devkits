@@ -12,10 +12,8 @@ on:
     secrets:
       username:
         required: true
-        type: string
       password:
         required: true
-        type: string
 
 jobs:
   build:
