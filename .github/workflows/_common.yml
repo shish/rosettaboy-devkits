@@ -42,5 +42,5 @@ jobs:
         NAME: ${{ inputs.language }}-version
         LABEL: ${{ inputs.language }}
         STATUS: ${{ inputs.version }}
-        COLOR: 00EEFF
+        COLOR: 1C8F11
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
