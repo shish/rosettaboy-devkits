@@ -34,3 +34,11 @@ jobs:
         password: ${{ secrets.password }}
         tags: ${{ inputs.version }}
         platforms: linux/amd64,linux/arm64
+    - name: Update Badge
+      uses: RubbaBoy/BYOB@v1.3.0
+      with:
+        NAME: ${{ inputs.language }}-version
+        LABEL: ${{ inputs.language }}
+        STATUS: ${{ inputs.version }}
+        COLOR: 00EEFF
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
