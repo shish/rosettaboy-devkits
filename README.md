@@ -1,5 +1,14 @@
 Rosettaboy Devkits
 ==================
+![](https://byob.yarr.is/shish/rosettaboy-devkits/go-version)
+![](https://byob.yarr.is/shish/rosettaboy-devkits/nim-version)
+![](https://byob.yarr.is/shish/rosettaboy-devkits/ocaml-version)
+![](https://byob.yarr.is/shish/rosettaboy-devkits/php-version)
+![](https://byob.yarr.is/shish/rosettaboy-devkits/pypy-version)
+![](https://byob.yarr.is/shish/rosettaboy-devkits/python-version)
+![](https://byob.yarr.is/shish/rosettaboy-devkits/rust-version)
+![](https://byob.yarr.is/shish/rosettaboy-devkits/zig-version)
+
 Because building PHP over and over again takes too much CPU time...
 
 * I need a single docker image with the ability to run a whole bunch of different language toolkits at the same time
