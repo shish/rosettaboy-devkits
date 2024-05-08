@@ -1,1 +1,10 @@
-{"go-version":{"label":"go","status":"1.22.2","color":"00EEFF"}}
+{
+"go-version":{"label":"go","status":"1.22.2","color":"1C8F11"},
+"nim-version":{"label":"nim","status":"1.22.2","color":"1C8F11"},
+"ocaml-version":{"label":"ocaml","status":"1.22.2","color":"1C8F11"},
+"php-version":{"label":"php","status":"1.22.2","color":"1C8F11"},
+"pypy-version":{"label":"pypy","status":"1.22.2","color":"1C8F11"},
+"python-version":{"label":"python","status":"1.22.2","color":"1C8F11"},
+"rust-version":{"label":"rust","status":"1.22.2","color":"1C8F11"},
+"zig-version":{"label":"zig","status":"1.22.2","color":"1C8F11"}
+}
