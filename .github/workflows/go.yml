@@ -13,5 +13,5 @@ jobs:
       language: go
       version: 1.24.3
       build: |
-        wget -qO- https://go.dev/dl/go${VERSION}.linux-${DEB_BUILD_GNU_CPU}.tar.gz \
+        wget -qO- https://go.dev/dl/go${VERSION}.linux-${DEB_BUILD_ARCH}.tar.gz \
           | tar --strip-components=1 -xz --one-top-level=pkg/opt/go
