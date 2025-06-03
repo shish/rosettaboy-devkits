@@ -11,13 +11,14 @@ jobs:
       contents: write
     strategy:
       matrix:
+        version: [0.14.1]
         os: [ubuntu-24.04, ubuntu-24.04-arm]
     with:
       language: zig
-      version: 0.14.1
+      version: ${{ matrix.version }}
       os: ${{ matrix.os }}
       build: |
-        wget --quiet -O - https://ziglang.org/download/${{ inputs.version }}/zig-${{ env.DEB_BUILD_GNU_CPU }}-linux-${{ inputs.version }}.tar.xz | \
+        wget --quiet -O - https://ziglang.org/download/${{ matrix.version }}/zig-$(dpkg-architecture -q DEB_BUILD_GNU_CPU)-linux-${{ matrix.version }}.tar.xz | \
             tar xJf - --one-top-level=src --strip-components=1
         mkdir -p pkg/usr/bin pkg/usr/lib
         mv src/lib pkg/usr/lib/zig
