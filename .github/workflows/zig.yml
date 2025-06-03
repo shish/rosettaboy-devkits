@@ -17,12 +17,10 @@ jobs:
     steps:
       - name: Set vars
         run: |
-          export DATETIME=$(date +'%Y%m%d.%H%M%S')
-          echo "DATETIME=$DATETIME" >> $GITHUB_ENV
           export $(dpkg-architecture)
           dpkg-architecture >> $GITHUB_ENV
           echo "PKG=rosettaboy-${{ matrix.app }}-dev" >> $GITHUB_ENV
-          echo "PKG_FILE=rosettaboy-${{ matrix.app }}-dev_${{ matrix.version }}.${DATETIME}_${DEB_BUILD_ARCH}.deb" >> $GITHUB_ENV
+          echo "PKG_FILE=rosettaboy-${{ matrix.app }}-dev_${{ matrix.version }}_${DEB_BUILD_ARCH}.deb" >> $GITHUB_ENV
 
       - name: Build app
         run: |
@@ -36,7 +34,7 @@ jobs:
         run: |
           mkdir -p pkg/DEBIAN
           echo "Package: ${{ env.PKG }}" > pkg/DEBIAN/control
-          echo "Version: ${{ matrix.version }}.${{ env.DATETIME }}" >> pkg/DEBIAN/control
+          echo "Version: ${{ matrix.version }}" >> pkg/DEBIAN/control
           echo "Description: Rosettaboy Devkit" >> pkg/DEBIAN/control
           echo "Architecture: ${{ env.DEB_BUILD_ARCH }}" >> pkg/DEBIAN/control
           echo "Maintainer: Shish <shish@shishnet.org>" >> pkg/DEBIAN/control
@@ -47,17 +45,14 @@ jobs:
         with:
           file: ${{ env.PKG_FILE }}
           tag: nightly
-#      - name: Upload package
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: ${{ env.PKG_FILE }}
-#          path: ${{ env.PKG_FILE }}
-#          #retention-days: 5
-#      - name: Update Badge
-#        uses: RubbaBoy/BYOB@v1.3.0
-#        with:
-#          NAME: ${{ matrix.app }}-version
-#          LABEL: ${{ matrix.app }}
-#          STATUS: ${{ matrix.version }}
-#          COLOR: 1C8F11
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          overwrite: true
+
+      - name: Update Badge
+        if: ${{ matrix.os == 'ubuntu-24.04' }}
+        uses: RubbaBoy/BYOB@v1.3.0
+        with:
+          NAME: ${{ matrix.app }}-version
+          LABEL: ${{ matrix.app }}
+          STATUS: ${{ matrix.version }}
+          COLOR: 1C8F11
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
