@@ -5,13 +5,13 @@ on:
 
 jobs:
   build:
-    name: Common
-    uses: ./.github/workflows/_common.yml
+    name: go
+    uses: ./.github/workflows/_common_deb.yml
     permissions:
       contents: write
     with:
       language: go
-      version: 1.24.2
-    secrets:
-      username: ${{ secrets.DOCKER_USERNAME }}
-      password: ${{ secrets.DOCKER_PASSWORD }}
+      version: 1.24.3
+      build: |
+        wget -qO- https://go.dev/dl/go${VERSION}.linux-${DEB_BUILD_GNU_CPU}.tar.gz \
+          | tar --strip-components=1 -xz --one-top-level=pkg/opt/go
