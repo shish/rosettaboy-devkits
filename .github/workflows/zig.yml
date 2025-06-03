@@ -5,58 +5,45 @@ on:
 
 jobs:
   build:
-    name: Build ${{ matrix.app }} ${{ matrix.version }} ${{ matrix.arch }} ${{ matrix.os }}
+    name: Build ${{ matrix.app }} ${{ matrix.version }} ${{ matrix.os }}
+    #permissions:
+    #  contents: write  # to update badges
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        app:
-          - zig
-        version:
-          - 0.14.1
-        include:
-          - os: ubuntu-24.04
-            arch: amd64
-            arch2: x86_64
-          - os: ubuntu-24.04-arm
-            arch: arm64
-            arch2: aarch64
+        app: [zig]
+        version: [0.14.1]
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
     steps:
+      - name: Set vars
+        run: |
+          echo "DATETIME=$(date +'%Y%m%d.%H%M%S')" >> $GITHUB_ENV
+          dpkg-architecture >> $GITHUB_ENV
+
       - name: Build app
         run: |
-          mkdir -p .debpkg/usr/bin
-          mkdir -p .debpkg/usr/lib
-          wget -O - https://ziglang.org/download/${{ matrix.version }}/zig-${{ matrix.arch2 }}-linux-${{ matrix.version }}.tar.xz | tar xJf - && \
-              mv zig-${{ matrix.arch2 }}-linux-${{ matrix.version }}/lib .debpkg/usr/lib/zig && \
-              mv zig-${{ matrix.arch2 }}-linux-${{ matrix.version }}/zig .debpkg/usr/bin/zig
-
-      - name: Build package
-        uses: jiro4989/build-deb-action@v4
-        with:
-          package: ${{ matrix.app }}
-          package_root: .debpkg
-          maintainer: Shish
-          version: ${{ matrix.version }}
-          arch: ${{ matrix.arch }}
-          #depends: 'git, jq' # optional
-          #pre_depends: 'libc6 (>= 2.2.1)' # optional
-          #desc: 'this is sample package.' # optional
-          #homepage: 'https://github.com/jiro4989/build-deb-action' # optional
-          #section: 'unknown'   # optional
-          #priority: 'required' # optional
-        id: build
+          mkdir -p pkg/usr/bin pkg/usr/lib pkg/DEBIAN
+          wget -O - https://ziglang.org/download/${{ matrix.version }}/zig-${{ env.DEB_BUILD_GNU_CPU }}-linux-${{ matrix.version }}.tar.xz | \
+              tar --one-top-level=unpack --strip-components=1 xJf -
+          mv unpack/lib pkg/usr/lib/zig
+          mv unpack/zig pkg/usr/bin/zig
+          echo "Package: ${{ matrix.app }}" > pkg/DEBIAN/control
+          echo "Version: ${{ matrix.version }}.${{ env.DATETIME }}" >> pkg/DEBIAN/control
+          echo "Architecture: ${{ env.DEB_BUILD_ARCH }}" >> pkg/DEBIAN/control
+          echo "Maintainer: Shish <shish@shishnet.org>" >> pkg/DEBIAN/control
+          dpkg-deb --build pkg ${{ matrix.app }}.deb
 
       - name: Upload package
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.app }}-${{ matrix.version }}-${{ matrix.arch }}.deb
-          path: ${{ steps.build.outputs.file_name }}
+          name: ${{ matrix.app }}-${{ matrix.version }}.${{ env.DATETIME }}-${{ env.DEB_BUILD_ARCH }}.deb
+          path: ${{ matrix.app }}.deb
           #retention-days: 5
-
-      - name: Update Badge
-        uses: RubbaBoy/BYOB@v1.3.0
-        with:
-          NAME: ${{ matrix.app }}-version
-          LABEL: ${{ matrix.app }}
-          STATUS: ${{ matrix.version }}
-          COLOR: 1C8F11
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Update Badge
+#        uses: RubbaBoy/BYOB@v1.3.0
+#        with:
+#          NAME: ${{ matrix.app }}-version
+#          LABEL: ${{ matrix.app }}
+#          STATUS: ${{ matrix.version }}
+#          COLOR: 1C8F11
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
