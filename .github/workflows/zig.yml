@@ -24,7 +24,7 @@ jobs:
 
       - name: Build app
         run: |
-          wget -O - https://ziglang.org/download/${{ matrix.version }}/zig-${{ env.DEB_BUILD_GNU_CPU }}-linux-${{ matrix.version }}.tar.xz | \
+          wget --quiet -O - https://ziglang.org/download/${{ matrix.version }}/zig-${{ env.DEB_BUILD_GNU_CPU }}-linux-${{ matrix.version }}.tar.xz | \
               tar xJf - --one-top-level=src --strip-components=1
           mkdir -p pkg/usr/bin pkg/usr/lib
           mv src/lib pkg/usr/lib/zig
