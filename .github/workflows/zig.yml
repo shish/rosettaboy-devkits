@@ -17,9 +17,9 @@ jobs:
     steps:
       - name: Set vars
         run: |
-          DATETIME=$(date +'%Y%m%d.%H%M%S')
+          export DATETIME=$(date +'%Y%m%d.%H%M%S')
           echo "DATETIME=$DATETIME" >> $GITHUB_ENV
-          $(dpkg-architecture)
+          export $(dpkg-architecture)
           dpkg-architecture >> $GITHUB_ENV
           echo "PKG=rosettaboy-${{ matrix.app }}-dev" >> $GITHUB_ENV
           echo "PKG_FILE=rosettaboy-${{ matrix.app }}-dev_${{ matrix.version }}.${DATETIME}_${DEB_BUILD_ARCH}.deb" >> $GITHUB_ENV
