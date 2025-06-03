@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    name: Build ${{ matrix.version }} ${{ matrix.arch }}
+    name: Build ${{ matrix.app }} ${{ matrix.version }} ${{ matrix.arch }} ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -51,3 +51,12 @@ jobs:
           name: ${{ matrix.app }}-${{ matrix.version }}-${{ matrix.arch }}.deb
           path: ${{ steps.build.outputs.file_name }}
           #retention-days: 5
+
+      - name: Update Badge
+        uses: RubbaBoy/BYOB@v1.3.0
+        with:
+          NAME: ${{ matrix.app }}-version
+          LABEL: ${{ matrix.app }}
+          STATUS: ${{ matrix.version }}
+          COLOR: 1C8F11
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
