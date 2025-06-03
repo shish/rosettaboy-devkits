@@ -19,9 +19,12 @@ on:
 jobs:
   build:
     name: Build
-    runs-on: ${{ inputs.os }}
+    runs-on: ${{ matrix.os }}
     permissions:
       contents: write
+    strategy:
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
     steps:
       - name: Set vars
         run: |
@@ -29,6 +32,7 @@ jobs:
           dpkg-architecture >> $GITHUB_ENV
           echo "PKG=rosettaboy-${{ inputs.language }}-dev" >> $GITHUB_ENV
           echo "PKG_FILE=rosettaboy-${{ inputs.language }}-dev_${{ inputs.version }}_${DEB_BUILD_ARCH}.deb" >> $GITHUB_ENV
+          echo "VERSION=${{ inputs.version }}"
 
       - name: Build app
         run: ${{ inputs.build }}
