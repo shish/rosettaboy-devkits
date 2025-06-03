@@ -5,13 +5,49 @@ on:
 
 jobs:
   build:
-    name: Common
-    uses: ./.github/workflows/_common.yml
-    permissions:
-      contents: write
-    with:
-      language: zig
-      version: 0.14.1
-    secrets:
-      username: ${{ secrets.DOCKER_USERNAME }}
-      password: ${{ secrets.DOCKER_PASSWORD }}
+    name: Build ${{ matrix.version }} ${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        app:
+          - zig
+        version:
+          - 0.14.1
+        include:
+          - os: ubuntu-24.04
+            arch: amd64
+            arch2: x86_64
+          - os: ubuntu-24.04-arm
+            arch: arm64
+            arch2: aarch64
+    steps:
+      - name: Build app
+        run: |
+          mkdir -p .debpkg/usr/bin
+          mkdir -p .debpkg/usr/lib
+          wget -O - https://ziglang.org/download/${{ matrix.version }}/zig-${{ matrix.arch2 }}-linux-${{ matrix.version }}.tar.xz | tar xJf - && \
+              mv zig-${{ matrix.arch2 }}-linux-${{ matrix.version }}/lib .debpkg/usr/lib/zig && \
+              mv zig-${{ matrix.arch2 }}-linux-${{ matrix.version }}/zig .debpkg/usr/bin/zig
+
+      - name: Build package
+        uses: jiro4989/build-deb-action@v4
+        with:
+          package: ${{ matrix.app }}
+          package_root: .debpkg
+          maintainer: Shish
+          version: ${{ matrix.version }}
+          arch: ${{ matrix.arch }}
+          #depends: 'git, jq' # optional
+          #pre_depends: 'libc6 (>= 2.2.1)' # optional
+          #desc: 'this is sample package.' # optional
+          #homepage: 'https://github.com/jiro4989/build-deb-action' # optional
+          #section: 'unknown'   # optional
+          #priority: 'required' # optional
+        id: build
+
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.app }}-${{ matrix.version }}-${{ matrix.arch }}.deb
+          path: ${{ steps.build.outputs.file_name }}
+          #retention-days: 5
