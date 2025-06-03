@@ -9,9 +9,6 @@ on:
       version:
         required: true
         type: string
-      os:
-        required: true
-        type: string
       build:
         required: true
         type: string
