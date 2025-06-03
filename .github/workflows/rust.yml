@@ -5,13 +5,17 @@ on:
 
 jobs:
   build:
-    name: Common
-    uses: ./.github/workflows/_common.yml
+    name: rust
+    uses: ./.github/workflows/_common_deb.yml
     permissions:
       contents: write
     with:
       language: rust
       version: 1.87.0
-    secrets:
-      username: ${{ secrets.DOCKER_USERNAME }}
-      password: ${{ secrets.DOCKER_PASSWORD }}
+      build: |
+        wget -nv -qO - https://sh.rustup.rs | sh -s -- --default-toolchain ${VERSION} -y
+        cargo search foo
+
+        # Cranelift is only in nightly
+        rustup toolchain install nightly
+        rustup component add rustc-codegen-cranelift-preview --toolchain nightly

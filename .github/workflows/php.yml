@@ -5,13 +5,25 @@ on:
 
 jobs:
   build:
-    name: Common
-    uses: ./.github/workflows/_common.yml
+    name: php
+    uses: ./.github/workflows/_common_deb.yml
     permissions:
       contents: write
     with:
       language: php
       version: 8.4.6
-    secrets:
-      username: ${{ secrets.DOCKER_USERNAME }}
-      password: ${{ secrets.DOCKER_PASSWORD }}
+      build: |
+        wget -qO- https://www.php.net/distributions/php-${VERSION}.tar.gz \
+          | tar --strip-components=1 -xJ --one-top-level=src
+        cd src
+        ./configure --prefix=/usr --with-openssl
+        make
+        make install
+        DESTDIR=$HOME/pkg make install
+        curl https://getcomposer.org/installer | php -- --quiet --install-dir=$HOME/pkg/usr/bin/ --filename=composer
+
+        git clone https://github.com/Ponup/php-sdl ~/php-sdl
+        cd ~/php-sdl
+        phpize
+        ./configure
+        make -j

@@ -5,13 +5,14 @@ on:
 
 jobs:
   build:
-    name: Common
-    uses: ./.github/workflows/_common.yml
+    name: pypy
+    uses: ./.github/workflows/_common_deb.yml
     permissions:
       contents: write
     with:
       language: pypy
       version: 7.3.16
-    secrets:
-      username: ${{ secrets.DOCKER_USERNAME }}
-      password: ${{ secrets.DOCKER_PASSWORD }}
+      build: |
+        wget -qO- https://downloads.python.org/pypy/pypy3.10-v${VERSION}-${ARCHITECTURE}.tar.bz2 \
+          | tar -xj -C /tmp
+        mv /tmp/pypy3.10-v${VERSION}-${ARCHITECTURE} /home/dev/.pypy
