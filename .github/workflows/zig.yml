@@ -19,26 +19,38 @@ jobs:
         run: |
           echo "DATETIME=$(date +'%Y%m%d.%H%M%S')" >> $GITHUB_ENV
           dpkg-architecture >> $GITHUB_ENV
+          echo "PKG=rosettaboy-${{ matrix.app }}-dev" >> $GITHUB_ENV
+          echo "PKG_FILE=rosettaboy-${{ matrix.app }}-dev_${{ matrix.version }}.${{ env.DATETIME }}_${{ env.DEB_BUILD_ARCH }}.deb" >> $GITHUB_ENV
 
       - name: Build app
         run: |
-          mkdir -p pkg/usr/bin pkg/usr/lib pkg/DEBIAN
           wget -O - https://ziglang.org/download/${{ matrix.version }}/zig-${{ env.DEB_BUILD_GNU_CPU }}-linux-${{ matrix.version }}.tar.xz | \
-              tar xJf - --one-top-level=unpack --strip-components=1
-          mv unpack/lib pkg/usr/lib/zig
-          mv unpack/zig pkg/usr/bin/zig
-          echo "Package: ${{ matrix.app }}" > pkg/DEBIAN/control
+              tar xJf - --one-top-level=src --strip-components=1
+          mkdir -p pkg/usr/bin pkg/usr/lib
+          mv src/lib pkg/usr/lib/zig
+          mv src/zig pkg/usr/bin/zig
+
+      - name: Build package
+        run: |
+          mkdir -p pkg/DEBIAN
+          echo "Package: ${{ env.PKG }}" > pkg/DEBIAN/control
           echo "Version: ${{ matrix.version }}.${{ env.DATETIME }}" >> pkg/DEBIAN/control
+          echo "Description: Rosettaboy Devkit" >> pkg/DEBIAN/control
           echo "Architecture: ${{ env.DEB_BUILD_ARCH }}" >> pkg/DEBIAN/control
           echo "Maintainer: Shish <shish@shishnet.org>" >> pkg/DEBIAN/control
-          dpkg-deb --build pkg ${{ matrix.app }}.deb
+          dpkg-deb --build pkg ${{ env.PKG_FILE }}
 
       - name: Upload package
-        uses: actions/upload-artifact@v4
+        uses: svenstaro/upload-release-action@v2
         with:
-          name: ${{ matrix.app }}-${{ matrix.version }}.${{ env.DATETIME }}-${{ env.DEB_BUILD_ARCH }}.deb
-          path: ${{ matrix.app }}.deb
-          #retention-days: 5
+          file: ${{ env.PKG_FILE }}
+          tag: nightly
+#      - name: Upload package
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: ${{ env.PKG_FILE }}
+#          path: ${{ env.PKG_FILE }}
+#          #retention-days: 5
 #      - name: Update Badge
 #        uses: RubbaBoy/BYOB@v1.3.0
 #        with:
