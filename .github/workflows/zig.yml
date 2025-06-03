@@ -24,7 +24,7 @@ jobs:
         run: |
           mkdir -p pkg/usr/bin pkg/usr/lib pkg/DEBIAN
           wget -O - https://ziglang.org/download/${{ matrix.version }}/zig-${{ env.DEB_BUILD_GNU_CPU }}-linux-${{ matrix.version }}.tar.xz | \
-              tar --one-top-level=unpack --strip-components=1 xJf -
+              tar xJf - --one-top-level=unpack --strip-components=1
           mv unpack/lib pkg/usr/lib/zig
           mv unpack/zig pkg/usr/bin/zig
           echo "Package: ${{ matrix.app }}" > pkg/DEBIAN/control
