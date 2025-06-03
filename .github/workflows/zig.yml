@@ -6,43 +6,19 @@ on:
 jobs:
   build:
     name: Build ${{ matrix.app }} ${{ matrix.version }} ${{ matrix.os }}
+    uses: ./.github/workflows/_common_deb.yml
     permissions:
-      contents: write # to update releases
-    runs-on: ${{ matrix.os }}
+      contents: write
     strategy:
       matrix:
-        app: [zig]
-        version: [0.14.1]
         os: [ubuntu-24.04, ubuntu-24.04-arm]
-    steps:
-      - name: Set vars
-        run: |
-          export $(dpkg-architecture)
-          dpkg-architecture >> $GITHUB_ENV
-          echo "PKG=rosettaboy-${{ matrix.app }}-dev" >> $GITHUB_ENV
-          echo "PKG_FILE=rosettaboy-${{ matrix.app }}-dev_${{ matrix.version }}_${DEB_BUILD_ARCH}.deb" >> $GITHUB_ENV
-
-      - name: Build app
-        run: |
-          wget --quiet -O - https://ziglang.org/download/${{ matrix.version }}/zig-${{ env.DEB_BUILD_GNU_CPU }}-linux-${{ matrix.version }}.tar.xz | \
-              tar xJf - --one-top-level=src --strip-components=1
-          mkdir -p pkg/usr/bin pkg/usr/lib
-          mv src/lib pkg/usr/lib/zig
-          mv src/zig pkg/usr/bin/zig
-
-      - name: Build package
-        run: |
-          mkdir -p pkg/DEBIAN
-          echo "Package: ${{ env.PKG }}" > pkg/DEBIAN/control
-          echo "Version: ${{ matrix.version }}" >> pkg/DEBIAN/control
-          echo "Description: Rosettaboy Devkit" >> pkg/DEBIAN/control
-          echo "Architecture: ${{ env.DEB_BUILD_ARCH }}" >> pkg/DEBIAN/control
-          echo "Maintainer: Shish <shish@shishnet.org>" >> pkg/DEBIAN/control
-          dpkg-deb --build pkg ${{ env.PKG_FILE }}
-
-      - name: Upload package
-        uses: svenstaro/upload-release-action@v2
-        with:
-          file: ${{ env.PKG_FILE }}
-          tag: nightly
-          overwrite: true
+    with:
+      language: zig
+      version: 0.14.1
+      os: ${{ matrix.os }}
+      build: |
+        wget --quiet -O - https://ziglang.org/download/${{ inputs.version }}/zig-${{ env.DEB_BUILD_GNU_CPU }}-linux-${{ inputs.version }}.tar.xz | \
+            tar xJf - --one-top-level=src --strip-components=1
+        mkdir -p pkg/usr/bin pkg/usr/lib
+        mv src/lib pkg/usr/lib/zig
+        mv src/zig pkg/usr/bin/zig

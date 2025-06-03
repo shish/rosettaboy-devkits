@@ -1,0 +1,48 @@
+name: Common Deb
+
+on:
+  workflow_call:
+    inputs:
+      language:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      os:
+        required: true
+        type: string
+
+jobs:
+  build:
+    name: Build
+    runs-on: ${{ inputs.os }}
+    permissions:
+      contents: write
+    steps:
+      - name: Set vars
+        run: |
+          export $(dpkg-architecture)
+          dpkg-architecture >> $GITHUB_ENV
+          echo "PKG=rosettaboy-${{ inputs.language }}-dev" >> $GITHUB_ENV
+          echo "PKG_FILE=rosettaboy-${{ inputs.language }}-dev_${{ inputs.version }}_${DEB_BUILD_ARCH}.deb" >> $GITHUB_ENV
+
+      - name: Build app
+        run: ${{ inputs.build }}
+
+      - name: Build package
+        run: |
+          mkdir -p pkg/DEBIAN
+          echo "Package: ${{ env.PKG }}" > pkg/DEBIAN/control
+          echo "Version: ${{ inputs.version }}" >> pkg/DEBIAN/control
+          echo "Description: Rosettaboy Devkit" >> pkg/DEBIAN/control
+          echo "Architecture: ${{ env.DEB_BUILD_ARCH }}" >> pkg/DEBIAN/control
+          echo "Maintainer: Shish <shish@shishnet.org>" >> pkg/DEBIAN/control
+          dpkg-deb --build pkg ${{ env.PKG_FILE }}
+
+      - name: Upload package
+        uses: svenstaro/upload-release-action@v2
+        with:
+          file: ${{ env.PKG_FILE }}
+          tag: nightly
+          overwrite: true
