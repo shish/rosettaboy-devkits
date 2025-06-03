@@ -12,6 +12,9 @@ on:
       os:
         required: true
         type: string
+      build:
+        required: true
+        type: string
 
 jobs:
   build:
