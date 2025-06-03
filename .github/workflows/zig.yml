@@ -11,7 +11,7 @@ jobs:
       contents: write
     with:
       language: zig
-      version: 0.12.0
+      version: 0.14.1
     secrets:
       username: ${{ secrets.DOCKER_USERNAME }}
       password: ${{ secrets.DOCKER_PASSWORD }}
