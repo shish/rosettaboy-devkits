@@ -46,13 +46,3 @@ jobs:
           file: ${{ env.PKG_FILE }}
           tag: nightly
           overwrite: true
-
-      - name: Update Badge
-        if: ${{ matrix.os == 'ubuntu-24.04' }}
-        uses: RubbaBoy/BYOB@v1.3.0
-        with:
-          NAME: ${{ matrix.app }}-version
-          LABEL: ${{ matrix.app }}
-          STATUS: ${{ matrix.version }}
-          COLOR: 1C8F11
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
