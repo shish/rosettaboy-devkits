@@ -6,8 +6,8 @@ on:
 jobs:
   build:
     name: Build ${{ matrix.app }} ${{ matrix.version }} ${{ matrix.os }}
-    #permissions:
-    #  contents: write  # to update badges
+    permissions:
+      contents: write # to update releases
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -17,10 +17,12 @@ jobs:
     steps:
       - name: Set vars
         run: |
-          echo "DATETIME=$(date +'%Y%m%d.%H%M%S')" >> $GITHUB_ENV
+          DATETIME=$(date +'%Y%m%d.%H%M%S')
+          echo "DATETIME=$DATETIME" >> $GITHUB_ENV
+          $(dpkg-architecture)
           dpkg-architecture >> $GITHUB_ENV
           echo "PKG=rosettaboy-${{ matrix.app }}-dev" >> $GITHUB_ENV
-          echo "PKG_FILE=rosettaboy-${{ matrix.app }}-dev_${{ matrix.version }}.${{ env.DATETIME }}_${{ env.DEB_BUILD_ARCH }}.deb" >> $GITHUB_ENV
+          echo "PKG_FILE=rosettaboy-${{ matrix.app }}-dev_${{ matrix.version }}.${DATETIME}_${DEB_BUILD_ARCH}.deb" >> $GITHUB_ENV
 
       - name: Build app
         run: |
