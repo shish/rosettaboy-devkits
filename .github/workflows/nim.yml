@@ -5,13 +5,22 @@ on:
 
 jobs:
   build:
-    name: Common
-    uses: ./.github/workflows/_common.yml
+    name: nim
+    uses: ./.github/workflows/_common_deb.yml
     permissions:
       contents: write
     with:
       language: nim
       version: 2.2.4
-    secrets:
-      username: ${{ secrets.DOCKER_USERNAME }}
-      password: ${{ secrets.DOCKER_PASSWORD }}
+      build: |
+        wget -qO- https://nim-lang.org/download/nim-${VERSION}.tar.xz \
+          | tar --strip-components=1 -xJ --one-top-level=src
+        cd src
+        ./build.sh
+        bin/nim c koch
+        ./koch boot -d:release
+        ./koch tools
+        ./install.sh /tmp/install-nim
+        mkdir -p ../pkg/opt/nim
+        mv /tmp/install-nim/nim/* ../pkg/opt/nim
+        cp ./bin/nimble ../pkg/opt/nim/bin/
