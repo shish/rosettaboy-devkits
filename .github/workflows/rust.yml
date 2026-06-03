@@ -11,7 +11,7 @@ jobs:
       contents: write
     with:
       language: rust
-      version: 1.87.0
+      version: 1.96.0
       build: |
         wget -nv -qO - https://sh.rustup.rs | sh -s -- --default-toolchain ${VERSION} -y
         cargo search foo

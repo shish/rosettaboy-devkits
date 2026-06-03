@@ -11,7 +11,7 @@ jobs:
       contents: write
     with:
       language: python
-      version: 3.13.3
+      version: 3.14.5
       build: |
         apt-get install -y --no-install-recommends \
           make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \

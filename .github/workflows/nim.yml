@@ -11,7 +11,7 @@ jobs:
       contents: write
     with:
       language: nim
-      version: 2.2.4
+      version: 2.2.10
       build: |
         wget -qO- https://nim-lang.org/download/nim-${VERSION}.tar.xz \
           | tar --strip-components=1 -xJ --one-top-level=src

@@ -11,7 +11,7 @@ jobs:
       contents: write
     with:
       language: php
-      version: 8.4.6
+      version: 8.5.6
       build: |
         wget -qO- https://www.php.net/distributions/php-${VERSION}.tar.gz \
           | tar --strip-components=1 -xJ --one-top-level=src

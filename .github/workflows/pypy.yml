@@ -11,7 +11,7 @@ jobs:
       contents: write
     with:
       language: pypy
-      version: 7.3.16
+      version: 7.3.23
       build: |
         wget -qO- https://downloads.python.org/pypy/pypy3.10-v${VERSION}-${ARCHITECTURE}.tar.bz2 \
           | tar -xj -C /tmp

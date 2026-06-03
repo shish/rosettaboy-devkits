@@ -11,7 +11,7 @@ jobs:
       contents: write
     with:
       language: zig
-      version: 0.14.1
+      version: 0.16.0
       build: |
         wget --quiet -O - https://ziglang.org/download/${VERSION}/zig-${DEB_BUILD_GNU_CPU}-linux-${VERSION}.tar.xz | \
             tar xJf - --one-top-level=src --strip-components=1
