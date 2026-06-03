@@ -13,7 +13,7 @@ jobs:
       language: php
       version: 8.5.6
       build: |
-        wget -qO- https://www.php.net/distributions/php-${VERSION}.tar.gz \
+        wget -qO- https://www.php.net/distributions/php-${VERSION}.tar.xz \
           | tar --strip-components=1 -xJ --one-top-level=src
         cd src
         ./configure --prefix=/usr --with-openssl
